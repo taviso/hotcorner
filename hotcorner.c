@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <windows.h>
 
-#pragma comment(lib, "user32")
+#pragma comment(lib, "USER32")
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS")
 
 // In GNOME 3 whenever you move the mouse to the top left corner, GNOME
 // switches to the activities view, it looks like this:
@@ -142,7 +143,7 @@ finish:
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-int main(int argc, char **argv)
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     MSG Msg;
     HHOOK Hook;
