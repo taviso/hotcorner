@@ -1,3 +1,5 @@
+# Tiny Hotcorner
+
 In GNOME 3 whenever you move the mouse to the top left corner, GNOME
 switches to the activities view, it looks like this:
 
@@ -24,7 +26,7 @@ Zero state is stored anywhere, no registry keys or configuration files.
 - If you want to configure something, edit the code.
 - If you want to uninstall it, just delete it.
 
-# Instructions
+## Instructions
 
 Change any of the parameters below, compile, then install.
 
@@ -43,6 +45,21 @@ Change any of the parameters below, compile, then install.
 
 If you don't have cl or nmake, they come with Visual Studio (or the Windows SDK, I think).
 
-# License
+## License
 
 GPL3
+
+## Author
+
+Tavis Ormandy [@taviso](https://github.com/taviso/)
+
+## FAQ
+
+* Q: I don't want to compile it, can't you just give me an exe? :(
+* A: Checkout the releases, [here](https://github.com/taviso/hotcorner/releases).
+
+* Q: Can you change a setting, and then compile it for me?
+* A: No.
+
+* Q: This doesn't work with my Application/Configuration/Whatever!
+* A: File an issue, if it's feasible to workaround I'll try.
