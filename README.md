@@ -28,7 +28,7 @@ Zero state is stored anywhere, no registry keys or configuration files.
 
 ## Instructions
 
-Change any of the parameters below, compile, then install.
+Change any of the parameters, compile, then install.
 
 ### Building
 
