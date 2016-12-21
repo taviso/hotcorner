@@ -1,4 +1,4 @@
-# Tiny Hotcorner for Windows
+# Tiny Hot Corners for Windows
 
 In GNOME 3 whenever you move the mouse to the top left corner, GNOME switches to the activities view, it looks like this:
 
