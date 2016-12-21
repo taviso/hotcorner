@@ -34,11 +34,11 @@ Change any of the parameters below, compile, then install.
 
 ### Installing
 
-`> copy hotcorners.exe "%USERPROFILE%\Start Menu\Programs\Startup"`
+`> copy hotcorner.exe "%USERPROFILE%\Start Menu\Programs\Startup"`
 
 ### Uninstalling
 
- `> del "%USERPROFILE%\Start Menu\Programs\Startup\hotcorners.exe"`
+ `> del "%USERPROFILE%\Start Menu\Programs\Startup\hotcorner.exe"`
 
 
 If you don't have cl or nmake, they come with Visual Studio (or the Windows SDK, I think).
