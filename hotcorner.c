@@ -5,24 +5,8 @@
 #pragma comment(lib, "USER32")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
 
-// In GNOME 3 whenever you move the mouse to the top left corner, GNOME
-// switches to the activities view, it looks like this:
-//
-//  https://www.gnome.org/wp-content/uploads/2016/03/window-selection-3.20-420x236.png
-//
-// Whenever I'm using Windows, I always forget that this doesn't work. Bleh.
-//
-// I searched around for existing solutions, and wasn't happy with anything I could find.
-//
-// The options seem to be
-//
-//  * Some ridiculous AutoHotKey/AutoIT monstrosity (?!?).
-//  * Massive Delphi application with 100MB of resources.
-//  * Some naive program that polls GetCursorPos() in a busy loop.
-//
-// None of these are what I want, I just want that GNOME 3 thing with absolute
-// minimal overhead.
-// 
+#define KEYDOWN(k) ((k) & 0x80)
+
 // This is a **very** minimal hotcorner app, written in C. Maybe its not the
 // optimal way to do this, but it works for me.
 //
@@ -61,10 +45,28 @@ static HANDLE CornerThread = INVALID_HANDLE_VALUE;
 // If the mouse leaves while we're waiting, the thread is just terminated.
 static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 {
+    BYTE KeyState[256];
     POINT Point;
 
     Sleep(kHotDelay);
+
+    // Check if a mouse putton is pressed, maybe a drag operation?
+    if (GetKeyState(VK_LBUTTON) < 0 || GetKeyState(VK_RBUTTON) < 0 || GetKeyState(VK_MBUTTON < 0)) {
+        return 0;
+    }
     
+    // Check if any key is pressed.
+    if (GetKeyboardState(KeyState) == FALSE) {
+        return 1;
+    }
+
+    // Check if any modifier keys are pressed.
+    if (KEYDOWN(KeyState[VK_SHIFT]) || KEYDOWN(KeyState[VK_CONTROL])
+     || KEYDOWN(KeyState[VK_MENU]) || KEYDOWN(KeyState[VK_LWIN])
+     || KEYDOWN(KeyState[VK_RWIN])) {
+        return 0;
+    }
+
     // Verify the corner is still hot
     if (GetCursorPos(&Point) == FALSE) {
         return 1;
