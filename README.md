@@ -65,4 +65,4 @@ Tavis Ormandy [@taviso](https://github.com/taviso/)
 * A: File an issue, if it's feasible to workaround I'll try.
 
 * Q: How do I turn it off without rebooting?
-* A: Use [Process Explorer](https://technet.microsoft.com/en-us/sysinternals/processexplorer.aspx),[Task Manager](https://en.wikipedia.org/wiki/Task_Manager_\(Windows\)), or [taskkill.exe](https://technet.microsoft.com/en-us/library/bb491009.aspx) to pause or terminate the process. I told you it was minimal!
+* A: Use [Process Explorer](https://technet.microsoft.com/en-us/sysinternals/processexplorer.aspx), [Process Hacker](http://processhacker.sourceforge.net/), [Task Manager](https://en.wikipedia.org/wiki/Task_Manager_\(Windows\)), or [taskkill.exe](https://technet.microsoft.com/en-us/library/bb491009.aspx) to Suspend or Terminate the process. I told you it was minimal!
