@@ -1,7 +1,6 @@
-# Tiny Hotcorner
+# Tiny Hotcorner for Windows
 
-In GNOME 3 whenever you move the mouse to the top left corner, GNOME
-switches to the activities view, it looks like this:
+In GNOME 3 whenever you move the mouse to the top left corner, GNOME switches to the activities view, it looks like this:
 
  ![Gnome Activities](https://www.gnome.org/wp-content/uploads/2016/03/window-selection-3.20-420x236.png)
 
@@ -15,11 +14,9 @@ The options seem to be
  * Massive Delphi application with 100MB of resources.
  * Some naive program that polls GetCursorPos() in a busy loop.
 
-None of these are what I want, I just want that GNOME 3 thing with absolute
-minimal overhead.
+None of these are what I want, I just want that GNOME 3 thing with absolute minimal overhead.
 
-This is a **very** minimal hotcorner app, written in C. Maybe its not the
-optimal way to do this, but it works for me.
+This is a **very** minimal hotcorner app, written in C. It doesn't have any features, but it works for me.
 
 Zero state is stored anywhere, no registry keys or configuration files.
 
@@ -29,6 +26,8 @@ Zero state is stored anywhere, no registry keys or configuration files.
 ## Instructions
 
 Change any of the parameters, compile, then install.
+
+A binary is available [here](https://github.com/taviso/hotcorner/releases) if you prefer.
 
 ### Building
 
@@ -58,11 +57,14 @@ Tavis Ormandy [@taviso](https://github.com/taviso/)
 * Q: I don't want to compile it, can't you just give me an exe? :(
 * A: Checkout the releases, [here](https://github.com/taviso/hotcorner/releases).
 
+
 * Q: Can you change a setting, and then compile it for me?
 * A: No.
 
+
 * Q: This doesn't work with my Application/Configuration/Whatever!
 * A: File an issue, if it's feasible to workaround I'll try.
+
 
 * Q: How do I turn it off without rebooting?
 * A: Use [Process Explorer](https://technet.microsoft.com/en-us/sysinternals/processexplorer.aspx), [Process Hacker](http://processhacker.sourceforge.net/), [Task Manager](https://en.wikipedia.org/wiki/Task_Manager_\(Windows\)), or [taskkill.exe](https://technet.microsoft.com/en-us/library/bb491009.aspx) to Suspend or Terminate the process. I told you it was minimal!
