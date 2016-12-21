@@ -1,10 +1,10 @@
-# Tiny Hot Corners for Windows
+# Tiny Hot Corners for Windows 10
 
 In GNOME 3 whenever you move the mouse to the top left corner, GNOME switches to the activities view, it looks like this:
 
  ![Gnome Activities](https://www.gnome.org/wp-content/uploads/2016/03/window-selection-3.20-420x236.png)
 
-Whenever I'm using Windows, I always forget that this doesn't work. Bleh.
+Whenever I'm using Windows 10, I always forget that this doesn't work. Bleh.
 
 I searched around for existing solutions, and wasn't happy with anything I could find.
 
