@@ -31,26 +31,6 @@
 // - If you want to configure something, edit the code.
 // - If you want to uninstall it, just delete it.
 //
-// Instructions
-// ------------------
-//
-// Change any of the parameters below, compile, then install.
-//
-// Building:
-//
-//  > nmake
-//
-// Installing:
-//
-// > copy hotcorners.exe "%USERPROFILE%\Start Menu\Programs\Startup"
-//
-// Uninstalling:
-//
-// > del "%USERPROFILE%\Start Menu\Programs\Startup\hotcorners.exe"
-//
-//
-// If you don't have cl or nmake, they come with Visual Studio (or the Windows SDK, I think).
-//
 // Tavis Ormandy <taviso@cmpxchg8b.com> December, 2016
 //
 // https://github.com/taviso/hotcorner
