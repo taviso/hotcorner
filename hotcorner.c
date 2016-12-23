@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <windows.h>
+#include <stdio.h>
 
 #pragma comment(lib, "USER32")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
@@ -35,12 +36,13 @@ static const INPUT kCornerInput[] = {
     { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_LWIN, .dwFlags = KEYEVENTF_KEYUP }},
 };
 
-// Callbacks for hotkeys.  Defined below.
-static void ToggleCorners(void);
-static void ExitCorners(void);
+// Callbacks for hotkeys.
+static int CALLBACK ToggleHotCorners(void); // CTRL+ALT+A
+static int CALLBACK ExitCorners(void);      // CTRL+ALT+C
 
-static const FARPROC HotKeyCallbacks[256] = {
-    ['A'] = ToggleCorners,
+// Add, remove, or change hotkeys here.
+static FARPROC HotKeyCallbacks[256] = {
+    ['A'] = ToggleHotCorners,
     ['C'] = ExitCorners,
 };
 
@@ -49,17 +51,7 @@ static const DWORD kHotDelay = 300;
 
 static HANDLE CornerThread = INVALID_HANDLE_VALUE;
 static BYTE KeyState[256];
-static BYTE CornersDisabled = 0;
-
-static void ToggleCorners(void)
-{
-    CornersDisabled = !CornersDisabled;
-}
-
-static void ExitCorners(void)
-{
-    TerminateProcess(GetCurrentProcess(), 0);
-}
+static HHOOK MouseHook, KeyHook;
 
 // This thread runs when the cursor enters the hot corner, and waits to see if the cursor stays in the corner.
 // If the mouse leaves while we're waiting, the thread is just terminated.
@@ -88,6 +80,7 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 
     // Check co-ordinates.
     if (PtInRect(&kHotCorner, Point)) {
+        #pragma warning(suppress : 4090)
         if (SendInput(_countof(kCornerInput), kCornerInput, sizeof(INPUT)) != _countof(kCornerInput)) {
             return 1;
         }
@@ -98,38 +91,41 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 
 static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *)(lParam);
-    if (CornersDisabled)
-        goto finish;
+    MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *) lParam;
 
     switch (wParam) {
-    case WM_LBUTTONDOWN:
-        KeyState[1] = true;
-        break;
-    case WM_LBUTTONUP:
-        KeyState[1] = false;
-        break;
-    case WM_RBUTTONDOWN:
-        KeyState[2] = true;
-        break;
-    case WM_RBUTTONUP:
-        KeyState[2] = false;
-        break;
-    case WM_MOUSEWHEEL:
-        KeyState[3] = HIWORD(wParam) >= 0 || LOWORD(wParam) == MK_MBUTTON;
-        break;
-    case WM_XBUTTONDOWN:
-        if (HIWORD(evt->mouseData) == XBUTTON1)
-            KeyState[4] = true;
-        else
-            KeyState[5] = true;
-        break;
-    case WM_XBUTTONUP:
-        if (HIWORD(evt->mouseData) == XBUTTON2)
-            KeyState[4] = false;
-        else
-            KeyState[5] = false;
-        break;
+        case WM_LBUTTONDOWN:
+            KeyState[VK_LBUTTON] = true;
+            break;
+        case WM_LBUTTONUP:
+            KeyState[VK_LBUTTON] = false;
+            break;
+        case WM_RBUTTONDOWN:
+            KeyState[VK_RBUTTON] = true;
+            break;
+        case WM_RBUTTONUP:
+            KeyState[VK_RBUTTON] = false;
+            break;
+        case WM_MOUSEWHEEL:
+            KeyState[VK_MBUTTON] = HIWORD(wParam) >= 0 || LOWORD(wParam) == MK_MBUTTON;
+            break;
+        case WM_XBUTTONDOWN:
+            if (HIWORD(evt->mouseData) == XBUTTON1)
+                KeyState[VK_XBUTTON1] = true;
+            else
+                KeyState[VK_XBUTTON2] = true;
+            break;
+        case WM_XBUTTONUP:
+            if (HIWORD(evt->mouseData) == XBUTTON2)
+                KeyState[VK_XBUTTON1] = false;
+            else
+                KeyState[VK_XBUTTON2] = false;
+            break;
+        case WM_MOUSEMOVE:
+            break;
+        default:
+            // Unhandled event
+            goto finish;
     }
 
     // Check if the cursor is hot or cold.
@@ -170,23 +166,29 @@ finish:
 
 static LRESULT CALLBACK KeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    KBDLLHOOKSTRUCT *evt = (KBDLLHOOKSTRUCT *)lParam;
-    int vkCode;
+    KBDLLHOOKSTRUCT *evt = (KBDLLHOOKSTRUCT *) lParam;
+
     if (nCode != HC_ACTION)
         goto finish;
 
-    vkCode = evt->vkCode;
-    if (vkCode >= 0x04 && vkCode <= 0x06)
-        --vkCode;
+    // Track the state of keys
+    switch (wParam) {
+        case WM_SYSKEYDOWN:
+        case WM_KEYDOWN:
+            KeyState[evt->vkCode] = true;
+            break;
+        case WM_SYSKEYUP:
+        case WM_KEYUP:
+            KeyState[evt->vkCode] = false;
+            // fallthrough
+        default:
+            goto finish;
+    }
 
-    KeyState[vkCode] = wParam == WM_SYSKEYDOWN || wParam == WM_KEYDOWN;
-    if (KeyState[VK_LCONTROL] && KeyState[VK_LMENU]) { /* LCTRL + LALT  */
-        /* Loop up to hotkeycallbacks size not key state size...  */
-        for (size_t k = 0; k < _countof(HotKeyCallbacks); ++k) {
-            if (KeyState[k] && HotKeyCallbacks[k]) {
-                HotKeyCallbacks[k]();
-                break;
-            }
+    // Check if a hotkey is being requested.
+    if (KeyState[VK_LCONTROL] && KeyState[VK_LMENU]) {
+        if (HotKeyCallbacks[evt->vkCode]) {
+            HotKeyCallbacks[evt->vkCode]();
         }
     }
 
@@ -194,23 +196,40 @@ finish:
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
+static int CALLBACK ToggleHotCorners(void)
+{
+
+    if (MouseHook) {
+        UnhookWindowsHookEx(MouseHook);
+        MouseHook = NULL;
+    } else {
+        MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0);
+    }
+
+    return !! MouseHook;
+}
+
+static int CALLBACK ExitCorners(void)
+{
+    return TerminateProcess(GetCurrentProcess(), 0);
+}
+
+
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     MSG Msg;
-    HHOOK MouseHook, KeyHook;
 
     if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
         return 1;
 
     if (!(KeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyHookCallback, NULL, 0)))
-        goto out;
+        return 1;
 
     while (GetMessage(&Msg, NULL, 0, 0)) {
         DispatchMessage(&Msg);
     }
 
     UnhookWindowsHookEx(KeyHook);
-out:
     UnhookWindowsHookEx(MouseHook);
 
     return Msg.wParam;
