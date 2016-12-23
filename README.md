@@ -16,11 +16,11 @@ The options seem to be
 
 None of these are what I want, I just want that GNOME 3 thing with absolute minimal overhead.
 
-This is a **very** minimal hotcorner app, written in C. It doesn't have any features, but it works for me.
+This is a **very** minimal hotcorner app, written in C. It's designed to be hackable, so you can adjust parameters, delays, bindings easily and recompile.
 
 Zero state is stored anywhere, no registry keys or configuration files.
 
-- If you want to configure something, edit the code.
+- If you want to configure something, edit the code and recompile.
 - If you want to uninstall it, just delete it.
 
 ## Instructions
