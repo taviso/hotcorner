@@ -67,7 +67,7 @@ Tavis Ormandy [@taviso](https://github.com/taviso/)
 
 
 * Q: How do I turn it off without rebooting?
-* A: Use [Process Explorer](https://technet.microsoft.com/en-us/sysinternals/processexplorer.aspx), [Process Hacker](http://processhacker.sourceforge.net/), [Task Manager](https://en.wikipedia.org/wiki/Task_Manager_\(Windows\)), or [taskkill.exe](https://technet.microsoft.com/en-us/library/bb491009.aspx) to Suspend or Terminate the process. I told you it was minimal! It also doesn't do anything if you're holding Shift, Control, Alt, etc.
+* A: You can use LCTRL+LALT+C to completely shut down the application or CTRL+LALT+C to toggle.
 
 * Q: Why doesn't it work if my current program is running as an Administrator?
 * A: [UIPI](https://en.wikipedia.org/wiki/User_Interface_Privilege_Isolation). I suppose you could "Run As Administrator" if it bothers you.
