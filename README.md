@@ -51,11 +51,11 @@ If you don't have cl or nmake, they come with Visual Studio (or the Windows SDK,
 
 All configuration requires modifying the parameters in `hotcorner.c` and recompiling.
 
-* `RECT kHotcorner` - The co-ordinates of the hot zone, you can make it bigger or smaller.
-* `INPUT kCornerInput[]` - What you want sent when the hot corner is activated, by default it switches to Windows' Task View.
-* `MODSTATE kHotKeyModifier[]` - The modifiers (shift, alt, ctrl, etc) you want pressed or unpressed to enable the hotkey function.
+* `RECT kHotcorner` - The co-ordinates of the hot zone.
+* `INPUT kCornerInput[]` - Input sent on activation.
+* `MODSTATE kHotKeyModifier[]` - Modifier Keys (shift, alt, ctrl, etc) you want to enable the hotkey function.
 * `FAPROC HotKeyCallbacks[]` - List of all the hotkey functions, you can change the indexes or comment them out.
-* `DWORD kHotDelay` - How long the pointer must wait in the corner before the hot corner is activated.
+* `DWORD kHotDelay` - How long the pointer must wait in the corner before being activated.
 
 ## License
 
@@ -63,8 +63,8 @@ GPL3
 
 ## Authors
 
-Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
-Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
+* Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
+* Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
 
 ## FAQ
 
