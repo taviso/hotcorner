@@ -67,9 +67,10 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
     }
 
     // Check if any modifier keys are pressed.
-    if (KeyState[VK_SHIFT] || KeyState[VK_CONTROL]
-        || KeyState[VK_MENU] || KeyState[VK_LWIN]
-        || KeyState[VK_RWIN]) {
+    if (KeyState[VK_SHIFT]   || KeyState[VK_RSHIFT] || KeyState[VK_LSHIFT]
+     || KeyState[VK_CONTROL] || KeyState[VK_RCONTROL] || KeyState[VK_LCONTROL]
+     || KeyState[VK_MENU]    || KeyState[VK_LMENU] || KeyState[VK_RMENU]
+     || KeyState[VK_LWIN]    || KeyState[VK_RWIN]) {
         return 0;
     }
 
