@@ -37,8 +37,8 @@ static const INPUT kCornerInput[] = {
     { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_LWIN, .dwFlags = KEYEVENTF_KEYUP }},
 };
 
-// What modifier keys you want pressed/unpressed to trigger the hotkey function.
-// By default, CTRL+ALT, but it's safe to add or change these.
+// Modifier keys (ctrl, shift, alt, etc) you want to trigger the hotkey function.
+// The state of any modifier not listed here are not checked.
 static const MODSTATE kHotKeyModifier[] = {
     { VK_LCONTROL,  true },
     { VK_LMENU,     true },
