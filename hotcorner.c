@@ -39,7 +39,7 @@ static const INPUT kCornerInput[] = {
 static void ToggleCorners(void);
 static void ExitCorners(void);
 
-static const FARPROC HotKeyCallbacks[] = {
+static const FARPROC HotKeyCallbacks[256] = {
     ['A'] = ToggleCorners,
     ['C'] = ExitCorners,
 };
@@ -182,7 +182,7 @@ static LRESULT CALLBACK KeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
     KeyState[vkCode] = wParam == WM_SYSKEYDOWN || wParam == WM_KEYDOWN;
     if (KeyState[VK_LCONTROL] && KeyState[VK_LMENU]) { /* LCTRL + LALT  */
         /* Loop up to hotkeycallbacks size not key state size...  */
-        for (size_t k = 0; k < sizeof(HotKeyCallbacks) / sizeof(HotKeyCallbacks[0]); ++k) {
+        for (size_t k = 0; k < _countof(HotKeyCallbacks); ++k) {
             if (KeyState[k] && HotKeyCallbacks[k]) {
                 HotKeyCallbacks[k]();
                 break;
