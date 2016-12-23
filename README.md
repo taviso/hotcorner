@@ -63,8 +63,8 @@ GPL3
 
 ## Authors
 
-Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
-Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
+* Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
+* Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
 
 ## FAQ
 
