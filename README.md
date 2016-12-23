@@ -67,7 +67,7 @@ Tavis Ormandy [@taviso](https://github.com/taviso/)
 
 
 * Q: How do I turn it off without rebooting?
-* A: You can use LCTRL+LALT+C to completely shut down the application or CTRL+LALT+C to toggle.
+* A: You can use LCTRL+LALT+C to completely shut down the application or CTRL+LALT+A to toggle.
 
 * Q: Why doesn't it work if my current program is running as an Administrator?
 * A: [UIPI](https://en.wikipedia.org/wiki/User_Interface_Privilege_Isolation). I suppose you could "Run As Administrator" if it bothers you.
