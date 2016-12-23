@@ -29,9 +29,13 @@ Change any of the parameters, compile, then install.
 
 A binary is available [here](https://github.com/taviso/hotcorner/releases) if you prefer.
 
-### Building
+### Building on Windows
 
 ` > nmake`
+
+### Building on Linux with MinGW-w64 toolchain
+
+` > x86_64-w64-mingw32-gcc -O2 hotcorner.c -o hotcorner.exe -Wl,-subsystem,windows`
 
 ### Installing
 
