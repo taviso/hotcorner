@@ -113,20 +113,11 @@ static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lPara
         case WM_RBUTTONUP:
             KeyState[VK_RBUTTON] = false;
             break;
-        case WM_MOUSEWHEEL:
-            KeyState[VK_MBUTTON] = HIWORD(wParam) >= 0 || LOWORD(wParam) == MK_MBUTTON;
+        case WM_MBUTTONDOWN:
+            KeyState[VK_MBUTTON] = true;
             break;
-        case WM_XBUTTONDOWN:
-            if (HIWORD(evt->mouseData) == XBUTTON1)
-                KeyState[VK_XBUTTON1] = true;
-            else
-                KeyState[VK_XBUTTON2] = true;
-            break;
-        case WM_XBUTTONUP:
-            if (HIWORD(evt->mouseData) == XBUTTON2)
-                KeyState[VK_XBUTTON1] = false;
-            else
-                KeyState[VK_XBUTTON2] = false;
+        case WM_MBUTTONUP:
+            KeyState[VK_MBUTTON] = false;
             break;
     }
 
