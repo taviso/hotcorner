@@ -35,12 +35,31 @@ static const INPUT kCornerInput[] = {
     { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_LWIN, .dwFlags = KEYEVENTF_KEYUP }},
 };
 
+// Callbacks for hotkeys.  Defined below.
+static void ToggleCorners(void);
+static void ExitCorners(void);
+
+static const FARPROC HotKeyCallbacks[] = {
+    ['A'] = ToggleCorners,
+    ['C'] = ExitCorners,
+};
+
 // How long cursor has to linger in the kHotCorner RECT to trigger input.
 static const DWORD kHotDelay = 300;
 
 static HANDLE CornerThread = INVALID_HANDLE_VALUE;
 static BYTE KeyState[256];
-static BYTE disabled = 0;
+static BYTE CornersDisabled = 0;
+
+static void ToggleCorners(void)
+{
+    CornersDisabled = !CornersDisabled;
+}
+
+static void ExitCorners(void)
+{
+    TerminateProcess(GetCurrentProcess(), 0);
+}
 
 // This thread runs when the cursor enters the hot corner, and waits to see if the cursor stays in the corner.
 // If the mouse leaves while we're waiting, the thread is just terminated.
@@ -80,7 +99,7 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
     MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *)(lParam);
-    if (disabled)
+    if (CornersDisabled)
         goto finish;
 
     switch (wParam) {
@@ -162,10 +181,13 @@ static LRESULT CALLBACK KeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 
     KeyState[vkCode] = wParam == WM_SYSKEYDOWN || wParam == WM_KEYDOWN;
     if (KeyState[VK_LCONTROL] && KeyState[VK_LMENU]) { /* LCTRL + LALT  */
-        if (KeyState[0x41])     /* +A => toggle  */
-            disabled = !disabled;
-        else if (KeyState[0x43])    /* +C => die  */
-            TerminateProcess(GetCurrentProcess(), 0);
+        /* Loop up to hotkeycallbacks size not key state size...  */
+        for (size_t k = 0; k < sizeof(HotKeyCallbacks) / sizeof(HotKeyCallbacks[0]); ++k) {
+            if (KeyState[k] && HotKeyCallbacks[k]) {
+                HotKeyCallbacks[k]();
+                break;
+            }
+        }
     }
 
 finish:
@@ -176,7 +198,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
     MSG Msg;
     HHOOK MouseHook, KeyHook;
-
 
     if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
         return 1;
