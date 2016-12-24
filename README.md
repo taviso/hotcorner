@@ -10,13 +10,13 @@ I searched around for existing solutions, and wasn't happy with anything I could
 
 The options seem to be
 
- * Some ridiculous AutoHotKey/AutoIT monstrosity (?!?).
+ * Some ridiculous AutoHotKey monstrosity (?!?).
  * Massive Delphi application with 100MB of resources.
  * Some naive program that polls GetCursorPos() in a busy loop.
 
 None of these are what I want, I just want that GNOME 3 thing with absolute minimal overhead.
 
-This is a **very** minimal hotcorner app, written in C. It's designed to be hackable, so you can adjust parameters, delays, bindings easily and recompile.
+This is a **very** minimal hotcorner app, written in C. You can adjust parameters, delays, bindings easily and recompile.
 
 Zero state is stored anywhere, no registry keys or configuration files.
 
@@ -56,7 +56,7 @@ Additionally, it is possible to build hotcorner on Linux using MinGW.
 
 All configuration requires modifying the parameters in `hotcorner.c` and recompiling.
 
-* `RECT kHotcorner` - The co-ordinates of the hot zone.
+* `RECT kHotcorner` - The coordinates of the hot zone.
 * `INPUT kCornerInput[]` - Input sent on activation.
 * `DWORD kHotKeyModifiers` - Modifier Keys (shift, alt, ctrl, etc) you want to enable the hotkey function.
 * `DWORD kHotDelay` - How long the pointer must wait in the corner before being activated.
