@@ -1,12 +1,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <stdlib.h>
-#include <stdbool.h>
 #include <windows.h>
-
-#include "hotcorner.h"
 
 #pragma comment(lib, "USER32")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
+
+#define KEYDOWN(k) ((k) & 0x80)
 
 // This is a **very** minimal hotcorner app, written in C. Maybe its not the
 // optimal way to do this, but it works for me.
@@ -37,50 +36,39 @@ static const INPUT kCornerInput[] = {
     { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_LWIN, .dwFlags = KEYEVENTF_KEYUP }},
 };
 
-// Modifier keys (ctrl, shift, alt, etc) you want to trigger the hotkey function.
-// The state of any modifier not listed here are not checked.
-static const MODSTATE kHotKeyModifier[] = {
-    { VK_LCONTROL,  true },
-    { VK_LMENU,     true },
-    { VK_LSHIFT,    false },
-};
-
-// Add, remove, or change hotkeys here. 
-static FARPROC kHotKeyCallbacks[256] = {
-    ['A'] = ToggleHotCorners,
-    ['C'] = ExitCorners,
-};
-
 // How long cursor has to linger in the kHotCorner RECT to trigger input.
 static const DWORD kHotDelay = 300;
 
+// You can exit the application using the hot key CTRL+ALT+C by default, if it
+// interferes with some application you're using (e.g. a full screen game).
+static const DWORD kHotKeyModifiers = MOD_CONTROL | MOD_ALT;
+static const DWORD kHotKey = 'C';
+
 static HANDLE CornerThread = INVALID_HANDLE_VALUE;
-static BYTE KeyState[256];
-static HHOOK MouseHook, KeyHook;
 
 // This thread runs when the cursor enters the hot corner, and waits to see if the cursor stays in the corner.
 // If the mouse leaves while we're waiting, the thread is just terminated.
 static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 {
+    BYTE KeyState[256];
     POINT Point;
 
     Sleep(kHotDelay);
 
     // Check if a mouse putton is pressed, maybe a drag operation?
-    if (KeyState[VK_LBUTTON] || KeyState[VK_RBUTTON] || KeyState[VK_MBUTTON])  {
+    if (GetKeyState(VK_LBUTTON) < 0 || GetKeyState(VK_RBUTTON) < 0) {
         return 0;
     }
 
     // Check if any modifier keys are pressed.
-    if (KeyState[VK_SHIFT]   || KeyState[VK_RSHIFT]     || KeyState[VK_LSHIFT]
-     || KeyState[VK_CONTROL] || KeyState[VK_RCONTROL]   || KeyState[VK_LCONTROL]
-     || KeyState[VK_MENU]    || KeyState[VK_LMENU]      || KeyState[VK_RMENU]
-     || KeyState[VK_LWIN]    || KeyState[VK_RWIN]) {
+    if (KEYDOWN(KeyState[VK_SHIFT]) || KEYDOWN(KeyState[VK_CONTROL])
+      || KEYDOWN(KeyState[VK_MENU]) || KEYDOWN(KeyState[VK_LWIN])
+      || KEYDOWN(KeyState[VK_RWIN])) {
         return 0;
     }
 
     // Verify the corner is still hot
-    if (GetCursorPos(&Point) == false) {
+    if (GetCursorPos(&Point) == FALSE) {
         return 1;
     }
 
@@ -98,28 +86,6 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
     MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *) lParam;
-
-    // Track button state.
-    switch (wParam) {
-        case WM_LBUTTONDOWN:
-            KeyState[VK_LBUTTON] = true;
-            break;
-        case WM_LBUTTONUP:
-            KeyState[VK_LBUTTON] = false;
-            break;
-        case WM_RBUTTONDOWN:
-            KeyState[VK_RBUTTON] = true;
-            break;
-        case WM_RBUTTONUP:
-            KeyState[VK_RBUTTON] = false;
-            break;
-        case WM_MBUTTONDOWN:
-            KeyState[VK_MBUTTON] = true;
-            break;
-        case WM_MBUTTONUP:
-            KeyState[VK_MBUTTON] = false;
-            break;
-    }
 
     // If the mouse hasn't moved, we're done.
     if (wParam != WM_MOUSEMOVE)
@@ -161,76 +127,23 @@ finish:
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-static LRESULT CALLBACK KeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
-{
-    KBDLLHOOKSTRUCT *evt = (KBDLLHOOKSTRUCT *) lParam;
-    size_t n;
-
-    if (nCode != HC_ACTION)
-        goto finish;
-
-    // Track the state of keys
-    switch (wParam) {
-        case WM_SYSKEYDOWN:
-        case WM_KEYDOWN:
-            KeyState[evt->vkCode] = true;
-            break;
-        case WM_SYSKEYUP:
-        case WM_KEYUP:
-            KeyState[evt->vkCode] = false;
-            // fallthrough
-        default:
-            goto finish;
-    }
-
-    // Check if a hotkey is being requested.
-    for (n = 0; n < _countof(kHotKeyModifier); n++) {
-        if (KeyState[kHotKeyModifier[n].KeyCode] != kHotKeyModifier[n].KeyDown)
-            goto finish;
-    }
-
-    if (kHotKeyCallbacks[evt->vkCode]) {
-        kHotKeyCallbacks[evt->vkCode]();
-    }
-
-finish:
-    return CallNextHookEx(NULL, nCode, wParam, lParam);
-}
-
-static int CALLBACK ToggleHotCorners(void)
-{
-
-    if (MouseHook) {
-        UnhookWindowsHookEx(MouseHook);
-        MouseHook = NULL;
-    } else {
-        MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0);
-    }
-
-    return !! MouseHook;
-}
-
-static int CALLBACK ExitCorners(void)
-{
-    return TerminateProcess(GetCurrentProcess(), 0);
-}
-
-
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     MSG Msg;
+    HHOOK MouseHook;
 
-    if (!ToggleHotCorners())
+    if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
         return 1;
 
-    if (!(KeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyHookCallback, NULL, 0)))
-        return 1;
+    RegisterHotKey(NULL, 1, kHotKeyModifiers | MOD_NOREPEAT, kHotKey);
 
     while (GetMessage(&Msg, NULL, 0, 0)) {
+        if (Msg.message == WM_HOTKEY) {
+            break;
+        }
         DispatchMessage(&Msg);
     }
 
-    UnhookWindowsHookEx(KeyHook);
     UnhookWindowsHookEx(MouseHook);
 
     return Msg.wParam;

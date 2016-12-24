@@ -53,8 +53,7 @@ All configuration requires modifying the parameters in `hotcorner.c` and recompi
 
 * `RECT kHotcorner` - The co-ordinates of the hot zone.
 * `INPUT kCornerInput[]` - Input sent on activation.
-* `MODSTATE kHotKeyModifier[]` - Modifier Keys (shift, alt, ctrl, etc) you want to enable the hotkey function.
-* `FAPROC HotKeyCallbacks[]` - List of all the hotkey functions, you can change the indexes or comment them out.
+* `DWORD kHotKeyModifiers` - Modifier Keys (shift, alt, ctrl, etc) you want to enable the hotkey function.
 * `DWORD kHotDelay` - How long the pointer must wait in the corner before being activated.
 
 ## License
@@ -81,10 +80,7 @@ GPL3
 
 
 * Q: How do I turn it off without rebooting?
-* A: You can use LCTRL+LALT+C to completely shut down the application or CTRL+LALT+A to toggle.
+* A: You can use CTRL+ALT+C to completely shut down the application.
 
 * Q: Why doesn't it work if my current program is running as an Administrator?
 * A: [UIPI](https://en.wikipedia.org/wiki/User_Interface_Privilege_Isolation). I suppose you could "Run As Administrator" if it bothers you.
-
-* Q: I don't want any hotkeys at all!
-* Q: Comment out all entries of the `kHotKeyCallbacks[]` array.
