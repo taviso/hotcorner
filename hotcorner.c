@@ -32,10 +32,10 @@ static const RECT kHotCorner = {
 
 // Input to inject when corner activated (Win+Tab by default).
 static const INPUT kCornerInput[] = {
-    { INPUT_KEYBOARD, .ki = { VK_LWIN }},
-    { INPUT_KEYBOARD, .ki = { VK_TAB }},
-    { INPUT_KEYBOARD, .ki = { VK_TAB, KEYEVENTF_KEYUP }},
-    { INPUT_KEYBOARD, .ki = { VK_LWIN, KEYEVENTF_KEYUP }},
+    { INPUT_KEYBOARD, .ki = { VK_LWIN, .dwFlags = 0 }},
+    { INPUT_KEYBOARD, .ki = { VK_TAB,  .dwFlags = 0 }},
+    { INPUT_KEYBOARD, .ki = { VK_TAB,  .dwFlags = KEYEVENTF_KEYUP }},
+    { INPUT_KEYBOARD, .ki = { VK_LWIN, .dwFlags = KEYEVENTF_KEYUP }},
 };
 
 // How long cursor has to linger in the kHotCorner RECT to trigger input.
