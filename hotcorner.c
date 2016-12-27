@@ -21,6 +21,8 @@
 //
 
 // If the mouse enters this rectangle, activate the hot corner function.
+// There are some hints about changing corners here
+//      https://github.com/taviso/hotcorner/issues/7#issuecomment-269367351
 static const RECT kHotCorner = {
     .top    = -20,
     .left   = -20,
@@ -30,10 +32,10 @@ static const RECT kHotCorner = {
 
 // Input to inject when corner activated (Win+Tab by default).
 static const INPUT kCornerInput[] = {
-    { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_LWIN }},
-    { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_TAB }},
-    { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_TAB, .dwFlags = KEYEVENTF_KEYUP }},
-    { .type = INPUT_KEYBOARD, .ki = { .wVk = VK_LWIN, .dwFlags = KEYEVENTF_KEYUP }},
+    { INPUT_KEYBOARD, .ki = { VK_LWIN }},
+    { INPUT_KEYBOARD, .ki = { VK_TAB }},
+    { INPUT_KEYBOARD, .ki = { VK_TAB, KEYEVENTF_KEYUP }},
+    { INPUT_KEYBOARD, .ki = { VK_LWIN, KEYEVENTF_KEYUP }},
 };
 
 // How long cursor has to linger in the kHotCorner RECT to trigger input.
@@ -135,7 +137,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
         return 1;
 
-    RegisterHotKey(NULL, 1, kHotKeyModifiers | MOD_NOREPEAT, kHotKey);
+    RegisterHotKey(NULL, 1, kHotKeyModifiers, kHotKey);
 
     while (GetMessage(&Msg, NULL, 0, 0)) {
         if (Msg.message == WM_HOTKEY) {
