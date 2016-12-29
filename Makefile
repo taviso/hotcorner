@@ -1,9 +1,11 @@
-CFLAGS=/Ox
+CFLAGS=/nologo /O2
+RFLAGS=/nologo /n
 
-hotcorner.exe: hotcorner.obj
+hotcorner.exe: hotcorner.obj version.res
+	$(CC) $(CFLAGS) /Fe:$(@F) $**
 
 clean:
-	del *.obj hotcorner.exe
+	del *.obj *.res hotcorner.exe
 
 install: hotcorner.exe
 	copy hotcorner.exe "%USERPROFILE%\Start Menu\Programs\Startup"
