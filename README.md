@@ -49,7 +49,8 @@ If you don't have cl or nmake, they come with Visual Studio (or the Windows SDK,
 
 Additionally, it is possible to build hotcorner on Linux using MinGW.
 
- `$ x86_64-w64-mingw32-gcc -O2 hotcorner.c -o hotcorner.exe -Wl,-subsystem,windows`
+ `$ x86_64-w64-mingw32-windres version.rc -O coff -o version.res`
+ `$ x86_64-w64-mingw32-gcc -O2 hotcorner.c version.res -o hotcorner.exe -Wl,-subsystem,windows`
 
 
 ### Configuration
