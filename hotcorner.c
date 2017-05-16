@@ -63,10 +63,12 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
     }
 
     // Check if any modifier keys are pressed.
-    if (KEYDOWN(KeyState[VK_SHIFT]) || KEYDOWN(KeyState[VK_CONTROL])
-      || KEYDOWN(KeyState[VK_MENU]) || KEYDOWN(KeyState[VK_LWIN])
-      || KEYDOWN(KeyState[VK_RWIN])) {
-        return 0;
+    if (GetKeyboardState(KeyState)) {
+        if (KEYDOWN(KeyState[VK_SHIFT]) || KEYDOWN(KeyState[VK_CONTROL])
+          || KEYDOWN(KeyState[VK_MENU]) || KEYDOWN(KeyState[VK_LWIN])
+          || KEYDOWN(KeyState[VK_RWIN])) {
+            return 0;
+        }
     }
 
     // Verify the corner is still hot
