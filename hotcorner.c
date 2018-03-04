@@ -20,15 +20,18 @@
 // https://github.com/taviso/hotcorner
 //
 
-// If the mouse enters this rectangle, activate the hot corner function.
-// There are some hints about changing corners here
-//      https://github.com/taviso/hotcorner/issues/7#issuecomment-269367351
-static const RECT kHotCorner = {
+// Hot corner area offsets relative to top left corner of given monitor.
+static const RECT kHotCornerOffsets = {
     .top    = -20,
     .left   = -20,
     .right  = +20,
     .bottom = +20,
 };
+
+#define MAX_MONITORS 10
+// If the mouse enters any of these rectangles, activate the hot corner function.
+static RECT gHotCorners[MAX_MONITORS];
+static INT gMonitorsCnt = 0;
 
 // Input to inject when corner activated (Win+Tab by default).
 static const INPUT kCornerInput[] = {
@@ -47,6 +50,16 @@ static const DWORD kHotKeyModifiers = MOD_CONTROL | MOD_ALT;
 static const DWORD kHotKey = 'C';
 
 static HANDLE CornerThread = INVALID_HANDLE_VALUE;
+
+static BOOL IsPointWithinHotCorner(POINT pt)
+{
+    for (int i = 0; i < gMonitorsCnt; i++) {
+        if (PtInRect(&gHotCorners[i], pt)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 // This thread runs when the cursor enters the hot corner, and waits to see if the cursor stays in the corner.
 // If the mouse leaves while we're waiting, the thread is just terminated.
@@ -77,7 +90,7 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
     }
 
     // Check co-ordinates.
-    if (PtInRect(&kHotCorner, Point)) {
+    if (IsPointWithinHotCorner(Point)) {
         #pragma warning(suppress : 4090)
         if (SendInput(_countof(kCornerInput), kCornerInput, sizeof(INPUT)) != _countof(kCornerInput)) {
             return 1;
@@ -87,16 +100,37 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
     return 0;
 }
 
+// Iterates over monitors.
+static BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+{
+    gHotCorners[gMonitorsCnt].top = lprcMonitor->top + kHotCornerOffsets.top;
+    gHotCorners[gMonitorsCnt].left = lprcMonitor->left + kHotCornerOffsets.left;
+    gHotCorners[gMonitorsCnt].bottom = lprcMonitor->top + kHotCornerOffsets.bottom;
+    gHotCorners[gMonitorsCnt].right = lprcMonitor->left + kHotCornerOffsets.right;
+    return ++gMonitorsCnt < MAX_MONITORS;
+}
+
 static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
     MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *) lParam;
+    POINT Point;
 
     // If the mouse hasn't moved, we're done.
     if (wParam != WM_MOUSEMOVE)
         goto finish;
 
+    // If no hot corner is active, update monitors positions (preventing data race)
+    if (CornerThread == INVALID_HANDLE_VALUE) {
+        gMonitorsCnt = 0;
+        EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, NULL);
+    }
+
+    // Need position compatible with EnumDisplayMonitors.
+    if (GetCursorPos(&Point) == FALSE)
+        goto finish;
+
     // Check if the cursor is hot or cold.
-    if (!PtInRect(&kHotCorner, evt->pt)) {
+    if (!IsPointWithinHotCorner(Point)) {
 
         // The corner is cold, and was cold before.
         if (CornerThread == INVALID_HANDLE_VALUE)
