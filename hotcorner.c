@@ -122,7 +122,7 @@ static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lPara
     // If no hot corner is active, update monitors positions (preventing data race)
     if (CornerThread == INVALID_HANDLE_VALUE) {
         gMonitorsCnt = 0;
-        EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, NULL);
+        EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
     }
 
     // Need position compatible with EnumDisplayMonitors.
