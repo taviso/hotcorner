@@ -108,7 +108,7 @@ static DWORD WINAPI CornerHotFunc_DownLeft(LPVOID lpParameter)
     BYTE KeyState[256];
     POINT Point;
 
-    Sleep(kHotDelay);
+    Sleep(10);
 
     // Check if a mouse putton is pressed, maybe a drag operation?
     if (GetKeyState(VK_LBUTTON) < 0 || GetKeyState(VK_RBUTTON) < 0)
