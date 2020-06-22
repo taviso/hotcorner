@@ -71,6 +71,14 @@ GPL3
 * Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
 * Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
 
+## Variations
+
+I've made a deliberate decision to keep hotcorner as simple as possible, here are some variations that
+other users have made that suit their needs better.
+
+* [Trigger the start menu with mouse in the lower left corner](https://github.com/misterchaos/hotcorner/), by @misterchaos 
+* [Multi-monitor support](https://github.com/Ortega-Dan/hotcorner/), by @Ortega-Dan and @mrowqa
+
 ## FAQ
 
 * Q: I don't want to compile it, can't you just give me an exe? :(
