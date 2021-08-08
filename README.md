@@ -21,6 +21,10 @@ This is a **very** minimal hotcorner app, written in C. You can adjust parameter
 Zero state is stored anywhere, no registry keys or configuration files.
 
 - If you want to configure something, edit the code and recompile.
+- Size of the rectangle and delay until its activated can be changed via arguments. Just have a look at the hotcorner.bat. The first four arguments are the size and positon of the reactange, 
+	the fifth argument is the delay in milliseconds. 
+	The order of the arguments is top, left, right, bottom. E.g. if you want a square at the top left, your arguments are -50 -50 50 50, for the bottom left on a 1080 pixel screen, you could use 
+	1070, 20, -20, 1100. 
 - If you want to uninstall it, just delete it.
 
 ## Instructions
@@ -35,13 +39,13 @@ A binary is available [here](https://github.com/taviso/hotcorner/releases) if yo
 
 ### Installing
 
-`> copy hotcorner.exe "%USERPROFILE%\Start Menu\Programs\Startup"`
+`> copy hotcorner.bat "%USERPROFILE%\Start Menu\Programs\Startup"`
 
 (or `nmake install`)
 
 ### Uninstalling
 
- `> del "%USERPROFILE%\Start Menu\Programs\Startup\hotcorner.exe"`
+ `> del "%USERPROFILE%\Start Menu\Programs\Startup\hotcorner.bat"`
 
 (or `nmake uninstall`)
 

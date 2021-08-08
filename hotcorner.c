@@ -1,6 +1,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <stdlib.h>
 #include <windows.h>
+#include <string.h>
+#include <stdio.h>
 
 #pragma comment(lib, "USER32")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
@@ -23,10 +25,10 @@
 // If the mouse enters this rectangle, activate the hot corner function.
 // There are some hints about changing corners here
 //      https://github.com/taviso/hotcorner/issues/7#issuecomment-269367351
-static const RECT kHotCorner = {
-    .top    = -20,
-    .left   = -20,
-    .right  = +20,
+static RECT kHotCorner = {
+    .top = -20,
+    .left = -20,
+    .right = +20,
     .bottom = +20,
 };
 
@@ -39,7 +41,7 @@ static const INPUT kCornerInput[] = {
 };
 
 // How long cursor has to linger in the kHotCorner RECT to trigger input.
-static const DWORD kHotDelay = 300;
+static DWORD kHotDelay = 300;
 
 // You can exit the application using the hot key CTRL+ALT+C by default, if it
 // interferes with some application you're using (e.g. a full screen game).
@@ -65,8 +67,8 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
     // Check if any modifier keys are pressed.
     if (GetKeyboardState(KeyState)) {
         if (KEYDOWN(KeyState[VK_SHIFT]) || KEYDOWN(KeyState[VK_CONTROL])
-          || KEYDOWN(KeyState[VK_MENU]) || KEYDOWN(KeyState[VK_LWIN])
-          || KEYDOWN(KeyState[VK_RWIN])) {
+            || KEYDOWN(KeyState[VK_MENU]) || KEYDOWN(KeyState[VK_LWIN])
+            || KEYDOWN(KeyState[VK_RWIN])) {
             return 0;
         }
     }
@@ -78,7 +80,7 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 
     // Check co-ordinates.
     if (PtInRect(&kHotCorner, Point)) {
-        #pragma warning(suppress : 4090)
+#pragma warning(suppress : 4090)
         if (SendInput(_countof(kCornerInput), kCornerInput, sizeof(INPUT)) != _countof(kCornerInput)) {
             return 1;
         }
@@ -89,7 +91,7 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 
 static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *) lParam;
+    MSLLHOOKSTRUCT* evt = (MSLLHOOKSTRUCT*)lParam;
 
     // If the mouse hasn't moved, we're done.
     if (wParam != WM_MOUSEMOVE)
@@ -135,6 +137,23 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
     MSG Msg;
     HHOOK MouseHook;
+
+    // get arguments from the command line. First four arguments are the coordinates of the rectangle that activates the hot corner
+    // fifth argument is the delay it takes to activate the hot corner
+    char* ptr;
+    char* arg1 = { strtok_s(lpCmdLine, " ", &ptr) };
+    char* arg2 = { strtok_s(NULL, " ", &ptr) };
+    char* arg3 = { strtok_s(NULL, " ", &ptr) };
+    char* arg4 = { strtok_s(NULL, " ", &ptr) };
+    char* arg5 = { strtok_s(NULL, " ", &ptr) };
+
+    if (arg1 && arg1[0] && arg2 && arg2[0] && arg3 && arg3[0] && arg4 && arg4[0]) {
+        kHotCorner.top = atol(arg1);
+        kHotCorner.left = atol(arg2);
+        kHotCorner.right = atol(arg3);
+        kHotCorner.bottom = atol(arg4);
+        kHotDelay = atol(arg5);
+    }
 
     if (!(MouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, NULL, 0)))
         return 1;
