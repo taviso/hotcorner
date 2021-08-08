@@ -74,6 +74,7 @@ GPL3
 
 * Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
 * Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
+* Pascal Jaeger [@Schievel1]https://github.com/Schievel1/ - Command line arguments
 
 ## Variations
 
