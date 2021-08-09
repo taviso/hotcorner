@@ -20,7 +20,7 @@ This is a **very** minimal hotcorner app, written in C. You can adjust parameter
 
 Zero state is stored anywhere, no registry keys or configuration files.
 
-- If you want to configure something, edit the code and recompile.
+- If you want to configure something, use the arguments or edit the code and recompile. ()
 - If you want to uninstall it, just delete it.
 
 ## Instructions
@@ -55,7 +55,14 @@ Additionally, it is possible to build hotcorner on Linux using MinGW.
 
 ### Configuration
 
-All configuration requires modifying the parameters in `hotcorner.c` and recompiling.
+Use the arguments to define the reactangle position and the delay. 
+Size of the rectangle and delay until its activated can be changed via arguments. The first four arguments define the size and positon of the reactangle, 
+the fifth argument is the delay in milliseconds. 
+The order of the arguments is top, left, right, bottom. E.g. if you want a square at the top left, your arguments are -50 -50 50 50, for the bottom left on a 1080 pixel screen, you could use 
+1070, 20, -20, 1100. To use the arguments make a shortcut to your hotcorner.exe and put the shortcut into "%USERPROFILE%\Start Menu\Programs\Startup\" instead of hotcorner.exe
+In the target of the shortcut add the arguments after hotcorner.exe. E.g. "your/path/to/hotcorner.exe -50 -50 50 50 100"
+If no arguments are provided, the default is used. (-20 -20 20 20 300)
+Further configuration requires modifying the parameters in `hotcorner.c` and recompiling.
 
 * `RECT kHotcorner` - The coordinates of the hot zone.
 * `INPUT kCornerInput[]` - Input sent on activation.
@@ -70,6 +77,7 @@ GPL3
 
 * Tavis Ormandy [@taviso](https://github.com/taviso/) - Original Author
 * Ahmed Samy [@asamy](https://github.com/asamy) - HotKey support
+* Pascal Jaeger [@Schievel1]https://github.com/Schievel1/ - Command line arguments
 
 ## Variations
 
