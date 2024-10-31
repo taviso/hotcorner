@@ -1,6 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <stdlib.h>
 #include <windows.h>
+#include <shellapi.h>
 
 #pragma comment(lib, "USER32")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
@@ -90,6 +91,7 @@ static DWORD WINAPI CornerHotFunc(LPVOID lpParameter)
 static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
     MSLLHOOKSTRUCT *evt = (MSLLHOOKSTRUCT *) lParam;
+    QUERY_USER_NOTIFICATION_STATE pquns;
 
     // If the mouse hasn't moved, we're done.
     if (wParam != WM_MOUSEMOVE)
@@ -121,6 +123,17 @@ static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lPara
     // Check if a mouse putton is pressed, maybe a drag operation?
     if (GetKeyState(VK_LBUTTON) < 0 || GetKeyState(VK_RBUTTON) < 0) {
         goto finish;
+    }
+
+    // Check if an app is currently fullscreen.
+    SHQueryUserNotificationState(&pquns);
+
+    switch (pquns) {
+    case QUNS_BUSY:
+    case QUNS_RUNNING_D3D_FULL_SCREEN:
+    case QUNS_PRESENTATION_MODE:
+        goto finish;
+    default:
     }
 
     // The corner is hot, and was previously cold. Here we start a thread to
