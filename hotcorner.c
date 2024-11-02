@@ -4,6 +4,7 @@
 #include <shellapi.h>
 
 #pragma comment(lib, "USER32")
+#pragma comment(lib, "SHELL32")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
 
 #define KEYDOWN(k) ((k) & 0x80)
@@ -129,11 +130,10 @@ static LRESULT CALLBACK MouseHookCallback(int nCode, WPARAM wParam, LPARAM lPara
     SHQueryUserNotificationState(&pquns);
 
     switch (pquns) {
-    case QUNS_BUSY:
-    case QUNS_RUNNING_D3D_FULL_SCREEN:
-    case QUNS_PRESENTATION_MODE:
-        goto finish;
-    default:
+        case QUNS_BUSY:
+        case QUNS_RUNNING_D3D_FULL_SCREEN:
+        case QUNS_PRESENTATION_MODE:
+            goto finish;
     }
 
     // The corner is hot, and was previously cold. Here we start a thread to
