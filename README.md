@@ -78,6 +78,7 @@ other users have made that suit their needs better.
 
 * [Trigger the start menu with mouse in the lower left corner](https://github.com/misterchaos/hotcorner/), by @misterchaos 
 * [Multi-monitor support](https://github.com/Ortega-Dan/hotcorner/), by @Ortega-Dan and @mrowqa
+* [Custom hotkeys and command support](https://github.com/xeahsoon/hotcorners), by @xeahsoon
 
 ## FAQ
 
